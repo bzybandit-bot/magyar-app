@@ -1,12 +1,12 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { allCopy } from "../hu";
-import { hasUiEnglish } from "./english";
+import { chromeCopy, learn, learningCopy, levelNameHu, ui } from "../hu";
+import { hasEnglishLeak, hasUiEnglish } from "./english";
 import { parseDrafts, parseJsonObject } from "./openai";
 
 function sourceFiles(dir: string): string[] {
-    return readdirSync(dir).flatMap((name: string) => {
+  return readdirSync(dir).flatMap((name: string) => {
     const path = join(dir, name);
     if (statSync(path).isDirectory()) return sourceFiles(path);
     return path.endsWith(".tsx") ? [path] : [];
@@ -25,16 +25,72 @@ function visibleLiterals(source: string): string[] {
   return found.filter(Boolean);
 }
 
-describe("learner-facing copy", () => {
-  it("keeps the string catalog free of English UI words", () => {
-    for (const line of allCopy()) expect(hasUiEnglish(line), line).toBe(false);
+const HUNGARIAN_CHROME = /Kezdőlap|Kártyák|Gyakorlás|Beszéd|Beállítások|Betöltés|Mentés|Kulcs|Hallgasd|Újra hallgatom/;
+const GLOSS = /\b(apple|dog|cat|water|bread|hello|please|thank you|translation|means|the word for)\b/i;
+
+describe("chrome copy", () => {
+  it("names navigation, setup, and errors in English", () => {
+    expect(ui.nav).toEqual({
+      home: "Home",
+      cards: "Cards",
+      practice: "Practice",
+      talk: "Talk",
+      settings: "Settings",
+    });
+    expect(ui.boot).toBe("Loading…");
+    expect(ui.placement.start).toBe("Start");
+    expect(ui.placement.beginner).toBe("I'm a complete beginner");
+    expect(ui.placement.replay).toBe("Listen again");
+    expect(ui.settings.title).toBe("Settings");
+    expect(ui.settings.keyTitle).toBe("Key");
+    expect(ui.settings.save).toBe("Save");
+    expect(ui.settings.clearKey).toBe("Delete key");
+    expect(ui.cards.again).toBe("Again");
+    expect(ui.cards.show).toBe("Show the word");
+    expect(ui.errors.auth).toBe("The service rejected the key.");
+    expect(ui.errors.storage).toBe("Saved progress could not be opened.");
+    expect(ui.talk.call).toBe("Call");
+    expect(ui.talk.hangup).toBe("End call");
+    expect(ui.talk.placeholder).toBe("Write in Hungarian…");
   });
 
-  it("does not bake English sentences into the interface files", () => {
+  it("does not leave Hungarian menus in the chrome catalog", () => {
+    for (const line of chromeCopy()) expect(line, line).not.toMatch(HUNGARIAN_CHROME);
+  });
+});
+
+describe("task content", () => {
+  it("keeps prompts, answers, and Lili's fallback in Hungarian", () => {
+    expect(learn.placement.picture).toBe("Melyik szó illik a képhez?");
+    expect(learn.placement.audio).toBe("Hallgasd meg, és válaszd ki a képet.");
+    expect(learn.cards.what).toBe("Mi ez?");
+    expect(learn.practice.picture).toBe("Melyik szó illik a képhez?");
+    expect(learn.practice.audio).toBe("Melyik kép illik a hanghoz?");
+    expect(learn.practice.type).toBe("Mi van a képen? Írd magyarul.");
+    expect(learn.practice.placeholder).toBe("Írd a magyar szót");
+    expect(learn.practice.accentNote).toBe("Az ékezet számít.");
+    expect(learn.practice.correct).toBe("Így van.");
+    expect(learn.practice.accent("az alma")).toBe("Majdnem. Az ékezet más: az alma.");
+    expect(learn.practice.wrong("a kutya")).toBe("Nem ez volt. A szó: a kutya.");
+    expect(learn.talk.safeFallback).toBe("Nem mondom el más nyelven. Mondd röviden, magyarul.");
+    expect(levelNameHu).toEqual({
+      A0: "első lépés",
+      A1: "kezdő",
+      A2: "alapfok",
+      B1: "középfok",
+      B2: "haladó",
+    });
+    for (const line of learningCopy()) {
+      expect(hasEnglishLeak(line), line).toBe(false);
+      expect(hasUiEnglish(line), line).toBe(false);
+    }
+  });
+
+  it("does not bake English glosses into the interface files", () => {
     const offenders: string[] = [];
     for (const file of [...sourceFiles(join(process.cwd(), "src")), join(process.cwd(), "index.html")]) {
       for (const literal of visibleLiterals(readFileSync(file, "utf8"))) {
-        if (hasUiEnglish(literal)) offenders.push(`${file}: ${literal}`);
+        if (GLOSS.test(literal) || HUNGARIAN_CHROME.test(literal)) offenders.push(`${file}: ${literal}`);
       }
     }
     expect(offenders).toEqual([]);

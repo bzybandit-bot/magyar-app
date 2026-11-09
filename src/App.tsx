@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { completePlacement, bootstrap } from "./lib/db";
-import { hu } from "./hu";
+import { ui } from "./hu";
 import { Cards } from "./screens/Cards";
 import { Home } from "./screens/Home";
 import { Placement } from "./screens/Placement";
@@ -46,9 +46,9 @@ export function App() {
   if (failed) {
     return (
       <main className="gate">
-        <p>{hu.errors.storage}</p>
+        <p>{ui.errors.storage}</p>
         <button className="btn primary" type="button" onClick={() => window.location.reload()}>
-          {hu.retry}
+          {ui.retry}
         </button>
       </main>
     );
@@ -56,7 +56,7 @@ export function App() {
   if (!profile) {
     return (
       <main className="gate">
-        <p>{hu.boot}</p>
+        <p>{ui.boot}</p>
       </main>
     );
   }

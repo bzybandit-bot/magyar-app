@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { hu, levelName } from "../hu";
+import { levelName, ui } from "../hu";
 import { patchProfile, resetProgress } from "../lib/db";
 import { keyLooksPlausible, readKey, writeKey } from "../lib/key";
 import { LEVELS, type Level } from "../types";
@@ -28,7 +28,7 @@ export function Settings() {
 
   async function saveKey() {
     if (!keyLooksPlausible(draft)) {
-      setNote(hu.settings.keyShort);
+      setNote(ui.settings.keyShort);
       return;
     }
     writeKey(draft);
@@ -59,29 +59,29 @@ export function Settings() {
 
   return (
     <div className="stack loose">
-      <h1>{hu.settings.title}</h1>
+      <h1>{ui.settings.title}</h1>
       <section className="panel stack">
-        <h2>{hu.settings.keyTitle}</h2>
-        <p>{hu.settings.keyHelp}</p>
+        <h2>{ui.settings.keyTitle}</h2>
+        <p>{ui.settings.keyHelp}</p>
         {stored && !replacing ? (
-          <p className="note">{hu.settings.saved}</p>
+          <p className="note">{ui.settings.saved}</p>
         ) : (
           <>
             <input
               type={visible ? "text" : "password"}
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
-              placeholder={hu.settings.keyPlaceholder}
+              placeholder={ui.settings.keyPlaceholder}
               autoComplete="off"
               autoCapitalize="off"
               spellCheck={false}
             />
             <div className="split">
               <button className="btn ghost" type="button" onClick={() => setVisible((value) => !value)}>
-                {visible ? hu.settings.hide : hu.settings.show}
+                {visible ? ui.settings.hide : ui.settings.show}
               </button>
               <button className="btn primary" type="button" onClick={() => void saveKey()}>
-                {hu.settings.save}
+                {ui.settings.save}
               </button>
             </div>
           </>
@@ -89,30 +89,30 @@ export function Settings() {
         {stored && !replacing && (
           <div className="split">
             <button className="btn ghost" type="button" onClick={() => setReplacing(true)}>
-              {hu.settings.replace}
+              {ui.settings.replace}
             </button>
             <button className="btn ghost" type="button" onClick={clearKey}>
-              {hu.settings.clearKey}
+              {ui.settings.clearKey}
             </button>
           </div>
         )}
         {note && <p role="status">{note}</p>}
       </section>
       <section className="panel stack">
-        <h2>{hu.settings.voiceTitle}</h2>
+        <h2>{ui.settings.voiceTitle}</h2>
         <button type="button" className={profile.autoAudio ? "toggle on" : "toggle"} aria-pressed={profile.autoAudio} onClick={() => void toggle({ autoAudio: !profile.autoAudio })}>
-          {hu.settings.autoAudio}
+          {ui.settings.autoAudio}
         </button>
         <button type="button" className={profile.speakReplies ? "toggle on" : "toggle"} aria-pressed={profile.speakReplies} onClick={() => void toggle({ speakReplies: !profile.speakReplies })}>
-          {hu.settings.speakReplies}
+          {ui.settings.speakReplies}
         </button>
         <button type="button" className={profile.autoGenerate ? "toggle on" : "toggle"} aria-pressed={profile.autoGenerate} onClick={() => void toggle({ autoGenerate: !profile.autoGenerate })}>
-          {hu.settings.autoGen}
+          {ui.settings.autoGen}
         </button>
       </section>
       <section className="panel stack">
-        <h2>{hu.settings.levelTitle}</h2>
-        <p>{hu.settings.levelHelp}</p>
+        <h2>{ui.settings.levelTitle}</h2>
+        <p>{ui.settings.levelHelp}</p>
         <div className="level-grid">
           {LEVELS.map((level) => (
             <button key={level} type="button" className={profile.level === level ? "pill on" : "pill"} onClick={() => void changeLevel(level)}>
@@ -123,8 +123,8 @@ export function Settings() {
         </div>
       </section>
       <section className="panel stack">
-        <h2>{hu.settings.progressTitle}</h2>
-        <p>{hu.settings.resetHelp}</p>
+        <h2>{ui.settings.progressTitle}</h2>
+        <p>{ui.settings.resetHelp}</p>
         {confirmReset ? (
           <div className="split">
             <button
@@ -137,21 +137,21 @@ export function Settings() {
                 });
               }}
             >
-              {hu.settings.resetYes}
+              {ui.settings.resetYes}
             </button>
             <button className="btn ghost" type="button" onClick={() => setConfirmReset(false)}>
-              {hu.settings.resetNo}
+              {ui.settings.resetNo}
             </button>
           </div>
         ) : (
           <button className="btn ghost" type="button" onClick={() => setConfirmReset(true)}>
-            {hu.settings.reset}
+            {ui.settings.reset}
           </button>
         )}
       </section>
       <section className="panel stack">
-        <h2>{hu.settings.phoneTitle}</h2>
-        <p>{hu.settings.installHelp}</p>
+        <h2>{ui.settings.phoneTitle}</h2>
+        <p>{ui.settings.installHelp}</p>
         {install && (
           <button
             className="btn primary"
@@ -159,11 +159,11 @@ export function Settings() {
             onClick={() => {
               void install.prompt().then(() => {
                 setInstall(null);
-                setNote(hu.settings.installed);
+                setNote(ui.settings.installed);
               });
             }}
           >
-            {hu.settings.install}
+            {ui.settings.install}
           </button>
         )}
       </section>

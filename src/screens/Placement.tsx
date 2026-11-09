@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { STARTER, starterDisplay } from "../data/deck";
 import { PLACEMENT } from "../data/placement";
-import { hu, levelBlurb, levelName } from "../hu";
+import { learn, levelBlurb, levelName, ui } from "../hu";
 import { shuffle } from "../lib/language";
 import { levelFromPlacement } from "../lib/level";
 import { speak, stopAudio } from "../lib/speech";
@@ -70,15 +70,15 @@ export function Placement({ onDone }: { onDone: (level: Level) => Promise<void> 
     return (
       <main className="gate">
         <Tulip />
-        <h1>{hu.appName}</h1>
-        <p className="lead">{hu.placement.tagline}</p>
-        <p>{hu.placement.intro}</p>
-        {!online && <p className="banner">{hu.offline}</p>}
+        <h1>{ui.appName}</h1>
+        <p className="lead">{ui.placement.tagline}</p>
+        <p>{ui.placement.intro}</p>
+        {!online && <p className="banner">{ui.offline}</p>}
         <button className="btn primary" type="button" onClick={begin}>
-          {hu.placement.start}
+          {ui.placement.start}
         </button>
         <button className="btn ghost" type="button" onClick={() => void onDone("A0")}>
-          {hu.placement.beginner}
+          {ui.placement.beginner}
         </button>
       </main>
     );
@@ -88,7 +88,7 @@ export function Placement({ onDone }: { onDone: (level: Level) => Promise<void> 
     const level = levelFromPlacement(PLACEMENT.map((entry, entryIndex) => ({ level: entry.level, ok: answers[entryIndex] ?? false })));
     return (
       <main className="gate">
-        <p className="eyebrow">{hu.placement.result}</p>
+        <p className="eyebrow">{ui.placement.result}</p>
         <h1>
           {level}
           <span> · {levelName[level]}</span>
@@ -98,7 +98,7 @@ export function Placement({ onDone }: { onDone: (level: Level) => Promise<void> 
           setBusy(true);
           void onDone(level);
         }}>
-          {hu.placement.go}
+          {ui.placement.go}
         </button>
       </main>
     );
@@ -110,13 +110,13 @@ export function Placement({ onDone }: { onDone: (level: Level) => Promise<void> 
 
   return (
     <main className="gate">
-      <p className="eyebrow">{hu.placement.progress(index + 1, PLACEMENT.length)}</p>
-      <h1>{item.mode === "audio" ? hu.placement.audio : hu.placement.picture}</h1>
+      <p className="eyebrow">{ui.placement.progress(index + 1, PLACEMENT.length)}</p>
+      <h1 lang="hu">{item.mode === "audio" ? learn.placement.audio : learn.placement.picture}</h1>
       {item.mode === "picture" ? (
-        <Picture id={answer.id} emoji={answer.emoji} label={hu.cards.what} />
+        <Picture id={answer.id} emoji={answer.emoji} label={learn.cards.what} lang="hu" />
       ) : (
         <button className="btn ghost" type="button" onClick={() => void speakAnswer()}>
-          {hu.placement.replay}
+          {ui.placement.replay}
         </button>
       )}
       <div className={item.mode === "audio" ? "choices" : "stack"}>
@@ -127,12 +127,12 @@ export function Placement({ onDone }: { onDone: (level: Level) => Promise<void> 
           if (item.mode === "audio") {
             return (
               <button key={id} type="button" className={`choice ${state}`} onClick={() => choose(id)}>
-                <Picture id={card.id} emoji={card.emoji} label={hu.practice.choice(optionIndex + 1)} />
+                <Picture id={card.id} emoji={card.emoji} label={ui.practice.choice(optionIndex + 1)} />
               </button>
             );
           }
           return (
-            <button key={id} type="button" className={`btn ghost choice-text ${state}`} onClick={() => choose(id)}>
+            <button key={id} type="button" className={`btn ghost choice-text ${state}`} lang="hu" onClick={() => choose(id)}>
               {starterDisplay(card)}
             </button>
           );

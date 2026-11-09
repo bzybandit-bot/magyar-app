@@ -2,7 +2,7 @@ import type { Level } from "../types";
 import { hasEnglishLeak } from "./english";
 import { stretchLevel } from "./language";
 import { tutorMessages, type TutorHistory } from "./tutor";
-import { hu } from "../hu";
+import { learn } from "../hu";
 
 export type AiFailure = "auth" | "quota" | "network" | "empty" | "other";
 
@@ -189,7 +189,7 @@ export async function replyAsTutor(
       { temperature: 0.4, maxTokens: 180 },
     );
   }
-  if (hasEnglishLeak(text)) return hu.talk.safeFallback;
+  if (hasEnglishLeak(text)) return learn.talk.safeFallback;
   return text;
 }
 

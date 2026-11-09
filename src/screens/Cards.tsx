@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { hu } from "../hu";
+import { learn, ui } from "../hu";
 import { attachAudio, buildSession, bumpQuota, getMedia, gradeCard } from "../lib/db";
 import { explainFailure } from "../lib/fail";
 import { createVocabulary } from "../lib/generate";
@@ -11,10 +11,10 @@ import type { Card, Grade } from "../types";
 import { Picture } from "../ui/Picture";
 
 const RATINGS: { grade: Grade; label: string; tone: string }[] = [
-  { grade: 0, label: hu.cards.again, tone: "again" },
-  { grade: 3, label: hu.cards.hard, tone: "hard" },
-  { grade: 4, label: hu.cards.good, tone: "good" },
-  { grade: 5, label: hu.cards.easy, tone: "easy" },
+  { grade: 0, label: ui.cards.again, tone: "again" },
+  { grade: 3, label: ui.cards.hard, tone: "hard" },
+  { grade: 4, label: ui.cards.good, tone: "good" },
+  { grade: 5, label: ui.cards.easy, tone: "easy" },
 ];
 
 export function Cards() {
@@ -72,7 +72,7 @@ export function Cards() {
       }
       await speak(text);
     } catch {
-      setNote(hu.cards.audioFail);
+      setNote(ui.cards.audioFail);
     }
   }
 
@@ -101,7 +101,7 @@ export function Cards() {
       const nextProfile = await gradeCard(current.id, grade);
       setProfile(nextProfile);
       await refreshCounts(nextProfile.level);
-      if (nextProfile.level !== before) setNote(hu.levelUp(nextProfile.level));
+      if (nextProfile.level !== before) setNote(ui.levelUp(nextProfile.level));
     } finally {
       lock.current = false;
     }
@@ -111,7 +111,7 @@ export function Cards() {
     const key = readKey();
     if (!card || !key || busy) return;
     setBusy(true);
-    setNote(hu.gen.audio(1, 1));
+    setNote(ui.gen.audio(1, 1));
     try {
       const blob = await synthesize(key, `${card.display}. ${card.sentence}`);
       await attachAudio(card.id, blob);
@@ -132,7 +132,7 @@ export function Cards() {
     const controller = new AbortController();
     abort.current = controller;
     setBusy(true);
-    setNote(hu.gen.words);
+    setNote(ui.gen.words);
     try {
       const count = await createVocabulary({
         key,
@@ -140,7 +140,7 @@ export function Cards() {
         signal: controller.signal,
         onProgress: setNote,
       });
-      if (count) setNote(hu.gen.done(count));
+      if (count) setNote(ui.gen.done(count));
       await load();
     } catch (error) {
       if (!controller.signal.aborted) setNote(explainFailure(error));
@@ -150,15 +150,15 @@ export function Cards() {
   }
 
   if (loading) {
-    return <p className="boot-inline">{hu.boot}</p>;
+    return <p className="boot-inline">{ui.boot}</p>;
   }
 
   if (!card || done) {
     return (
       <div className="stack loose">
-        <h1>{hu.cards.title}</h1>
+        <h1>{ui.cards.title}</h1>
         <p className="lead">
-          {finished ? hu.cards.done : counts.fresh > 0 && profile.newToday >= profile.quota ? hu.cards.emptyToday : hu.home.rest}
+          {finished ? ui.cards.done : counts.fresh > 0 && profile.newToday >= profile.quota ? ui.cards.emptyToday : ui.home.rest}
         </p>
         {note && (
           <p role="status" className="note">
@@ -166,7 +166,7 @@ export function Cards() {
           </p>
         )}
         <button className="btn primary" type="button" onClick={() => void load()}>
-          {hu.cards.another}
+          {ui.cards.another}
         </button>
         {profile.newToday >= profile.quota && (
           <button
@@ -179,26 +179,26 @@ export function Cards() {
               });
             }}
           >
-            {hu.home.moreDeck}
+            {ui.home.moreDeck}
           </button>
         )}
         {hasKey && (
           <button className="btn ghost" type="button" disabled={busy} onClick={() => void generate()}>
-            {hu.home.moreAi}
+            {ui.home.moreAi}
           </button>
         )}
         {busy && (
           <button className="btn tiny" type="button" onClick={() => abort.current?.abort()}>
-            {hu.cards.cancel}
+            {ui.cards.cancel}
           </button>
         )}
         {!hasKey && (
           <button className="btn ghost" type="button" onClick={() => setScreen("settings")}>
-            {hu.home.needKey}
+            {ui.home.needKey}
           </button>
         )}
         <button className="btn tiny" type="button" onClick={() => setScreen("home")}>
-          {hu.backHome}
+          {ui.backHome}
         </button>
       </div>
     );
@@ -207,31 +207,35 @@ export function Cards() {
   return (
     <div className="stack">
       <header className="top">
-        <h1>{hu.cards.title}</h1>
-        <span className="pill">{hu.placement.progress(index + 1, queue.length)}</span>
+        <h1>{ui.cards.title}</h1>
+        <span className="pill">{ui.placement.progress(index + 1, queue.length)}</span>
       </header>
-      <Picture id={card.id} emoji={card.emoji} imageId={card.imageId} label={revealed ? card.display : hu.cards.what} />
+      <Picture id={card.id} emoji={card.emoji} imageId={card.imageId} label={revealed ? card.display : learn.cards.what} lang="hu" />
       {revealed ? (
         <div className="stack">
-          <p className="word">{card.display}</p>
-          <p className="sentence">{card.sentence}</p>
+          <p className="word" lang="hu">
+            {card.display}
+          </p>
+          <p className="sentence" lang="hu">
+            {card.sentence}
+          </p>
           {card.hint && (
             <p className="hint">
-              <span>{hu.cards.simpler}</span>
-              {card.hint}
+              <span className="hint-label">{ui.cards.simpler}</span>
+              <span lang="hu">{card.hint}</span>
             </p>
           )}
           <div className="split">
             <button className="btn ghost" type="button" onClick={() => void play(card, "word")}>
-              {hu.cards.word}
+              {ui.cards.word}
             </button>
             <button className="btn ghost" type="button" onClick={() => void play(card, "sentence")}>
-              {hu.cards.sentence}
+              {ui.cards.sentence}
             </button>
           </div>
           {hasKey && !card.audioId && (
             <button className="btn tiny" type="button" disabled={busy} onClick={() => void betterVoice()}>
-              {hu.cards.betterVoice}
+              {ui.cards.betterVoice}
             </button>
           )}
           <div className="ratings">
@@ -244,12 +248,14 @@ export function Cards() {
         </div>
       ) : (
         <div className="stack">
-          <p className="lead">{hu.cards.what}</p>
+          <p className="lead" lang="hu">
+            {learn.cards.what}
+          </p>
           <button className="btn ghost" type="button" onClick={() => void play(card, "word")}>
-            {hu.cards.listen}
+            {ui.cards.listen}
           </button>
           <button className="btn primary" type="button" onClick={() => setRevealed(true)}>
-            {hu.cards.show}
+            {ui.cards.show}
           </button>
         </div>
       )}

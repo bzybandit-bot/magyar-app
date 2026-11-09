@@ -40,11 +40,28 @@ describe("starter deck", () => {
     }
   });
 
-  it("keeps scenes and the partner brief free of English leaks", () => {
+  it("names scenes in English and keeps the partner brief Hungarian", () => {
+    expect(SCENARIOS.map((scenario) => scenario.label)).toEqual([
+      "Cafe",
+      "Restaurant",
+      "Shop",
+      "Market",
+      "Gym",
+      "School",
+      "Doctor",
+      "Station",
+      "Travel",
+      "Friends",
+    ]);
     for (const scenario of SCENARIOS) {
-      expect(hasUiEnglish(scenario.label), scenario.label).toBe(false);
       expect(hasEnglishLeak(scenario.scene), scenario.scene).toBe(false);
+      expect(scenario.scene).not.toMatch(/\b(the|please|hello|english)\b/i);
     }
-    expect(hasEnglishLeak(tutorInstructions("A2", SCENARIOS[0].scene))).toBe(false);
+    const brief = tutorInstructions("A2", SCENARIOS[0].scene);
+    expect(hasEnglishLeak(brief)).toBe(false);
+    expect(brief).toContain("Soha nem használsz angol");
+    expect(brief).toContain("alapfok");
+    expect(brief).not.toContain("elementary");
+    expect(hasUiEnglish(brief)).toBe(false);
   });
 });

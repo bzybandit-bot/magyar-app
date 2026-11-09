@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { hu, levelName } from "../hu";
+import { levelName, ui } from "../hu";
 import { bumpQuota, patchProfile } from "../lib/db";
 import { explainFailure } from "../lib/fail";
 import { createVocabulary } from "../lib/generate";
@@ -25,14 +25,14 @@ export function Home() {
     const key = readKey();
     if (!key || busy) return;
     setBusy(true);
-    setNote(hu.gen.words);
+    setNote(ui.gen.words);
     try {
       const count = await createVocabulary({
         key,
         level: profile.level,
         onProgress: setNote,
       });
-      setNote(hu.gen.done(count));
+      setNote(ui.gen.done(count));
       await refreshCounts(profile.level);
       setScreen("cards");
     } catch (error) {
@@ -52,7 +52,7 @@ export function Home() {
       </header>
       {!profile.tipSeen && (
         <aside className="tip">
-          <p>{hu.home.tip}</p>
+          <p>{ui.home.tip}</p>
           <button
             type="button"
             className="btn tiny"
@@ -60,44 +60,46 @@ export function Home() {
               void patchProfile({ tipSeen: true }).then(setProfile);
             }}
           >
-            {hu.home.tipOk}
+            {ui.home.tipOk}
           </button>
         </aside>
       )}
       <section className="hero">
-        <p className="eyebrow">{greeting()}</p>
+        <p className="eyebrow" lang="hu">
+          {greeting()}
+        </p>
         <p className="big-count">{ready}</p>
-        <h1>{hu.home.dueLine(ready)}</h1>
+        <h1>{ui.home.dueLine(ready)}</h1>
         <button className="btn primary" type="button" onClick={() => setScreen("cards")}>
-          {hu.home.study}
+          {ui.home.study}
         </button>
         <div className="split">
           <button className="btn ghost" type="button" onClick={() => setScreen("practice")}>
-            {hu.home.practice}
+            {ui.home.practice}
           </button>
           <button className="btn ghost" type="button" onClick={() => setScreen("talk")}>
-            {hu.home.talk}
+            {ui.home.talk}
           </button>
         </div>
       </section>
       <section className="panel stack">
-        <h2>{hu.home.today}</h2>
-        <p>{hu.home.newLine(profile.newToday, profile.quota)}</p>
-        <p>{hu.home.learnedLine(counts.learned)}</p>
-        <p>{hu.home.freshLine(counts.fresh)}</p>
+        <h2>{ui.home.today}</h2>
+        <p>{ui.home.newLine(profile.newToday, profile.quota)}</p>
+        <p>{ui.home.learnedLine(counts.learned)}</p>
+        <p>{ui.home.freshLine(counts.fresh)}</p>
         {ready === 0 && counts.nextDue && <p>{duePhrase(counts.nextDue)}</p>}
         {counts.fresh > 0 && profile.newToday >= profile.quota && (
           <button className="btn ghost" type="button" onClick={() => void moreFromDeck()}>
-            {hu.home.moreDeck}
+            {ui.home.moreDeck}
           </button>
         )}
         {hasKey ? (
           <button className="btn primary" type="button" disabled={busy} onClick={() => void moreFromKey()}>
-            {busy ? note || hu.gen.words : hu.home.moreAi}
+            {busy ? note || ui.gen.words : ui.home.moreAi}
           </button>
         ) : (
           <button className="btn ghost" type="button" onClick={() => setScreen("settings")}>
-            {hu.home.needKey}
+            {ui.home.needKey}
           </button>
         )}
         {note && !busy && (

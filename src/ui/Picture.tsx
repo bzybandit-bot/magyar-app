@@ -17,11 +17,13 @@ export function Picture({
   emoji,
   imageId,
   label,
+  lang,
 }: {
   id: string;
   emoji: string;
   imageId?: string;
   label: string;
+  lang?: string;
 }) {
   const [url, setUrl] = useState<string>();
   useEffect(() => {
@@ -44,7 +46,7 @@ export function Picture({
 
   const hue = hueOf(id);
   return (
-    <div className={url ? "picture photo" : "picture"} role="img" aria-label={label} style={url ? undefined : { background: `hsl(${hue} 42% 88%)` }}>
+    <div className={url ? "picture photo" : "picture"} role="img" aria-label={label} lang={lang} style={url ? undefined : { background: `hsl(${hue} 42% 88%)` }}>
       {url ? (
         <img src={url} alt="" />
       ) : (

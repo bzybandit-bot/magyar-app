@@ -228,7 +228,7 @@ p { margin: 0; line-height: 1.45; }
   border-radius: 16px;
   padding: 12px 14px;
 }
-.hint span {
+.hint .hint-label {
   display: block;
   font-size: 0.82rem;
   font-weight: 700;

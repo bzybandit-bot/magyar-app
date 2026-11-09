@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { SCENARIOS, type Scenario } from "../data/scenarios";
-import { hu } from "../hu";
+import { ui } from "../hu";
 import { explainFailure } from "../lib/fail";
 import { readKey } from "../lib/key";
 import { AiError, replyAsTutor, synthesize, transcribe } from "../lib/openai";
@@ -106,13 +106,13 @@ export function Talk() {
         recorder.current = null;
         const heard = await transcribe(readKey(), blob);
         if (!heard) {
-          setError(hu.talk.emptyHeard);
+          setError(ui.talk.emptyHeard);
           return;
         }
         await send(heard);
       } catch (reason) {
         recorder.current = null;
-        setError(reason instanceof DOMException ? hu.talk.mic : explainFailure(reason));
+        setError(reason instanceof DOMException ? ui.talk.mic : explainFailure(reason));
       }
       return;
     }
@@ -121,7 +121,7 @@ export function Talk() {
       setRecording(true);
       setError("");
     } catch {
-      setError(hu.talk.mic);
+      setError(ui.talk.mic);
     }
   }
 
@@ -156,9 +156,9 @@ export function Talk() {
       setLive(true);
     } catch (reason) {
       call.current = null;
-      if (reason instanceof DOMException) setError(hu.talk.mic);
+      if (reason instanceof DOMException) setError(ui.talk.mic);
       else if (reason instanceof AiError) setError(explainFailure(reason));
-      else setError(hu.talk.callFail);
+      else setError(ui.talk.callFail);
     } finally {
       setConnecting(false);
     }
@@ -167,23 +167,23 @@ export function Talk() {
   if (!hasKey) {
     return (
       <div className="stack loose">
-        <h1>{hu.talk.title}</h1>
-        <p>{hu.talk.needKey}</p>
+        <h1>{ui.talk.title}</h1>
+        <p>{ui.talk.needKey}</p>
         <button className="btn primary" type="button" onClick={() => setScreen("settings")}>
-          {hu.talk.toKey}
+          {ui.talk.toKey}
         </button>
       </div>
     );
   }
 
-  const status = connecting ? hu.talk.connecting : activity === "user" ? hu.talk.listening : activity === "partner" ? hu.talk.speaking : live ? hu.talk.live : "";
+  const status = connecting ? ui.talk.connecting : activity === "user" ? ui.talk.listening : activity === "partner" ? ui.talk.speaking : live ? ui.talk.live : "";
 
   return (
     <div className="talk">
       <header className="top">
-        <h1>{hu.talk.title}</h1>
+        <h1>{ui.talk.title}</h1>
       </header>
-      <p className="muted">{scenario ? scenario.label : hu.talk.pick}</p>
+      <p className="muted">{scenario ? scenario.label : ui.talk.pick}</p>
       <div className="scenes">
         {SCENARIOS.map((scene) => (
           <button key={scene.id} type="button" className={scenario?.id === scene.id ? "pill on" : "pill"} onClick={() => choose(scene)}>
@@ -192,20 +192,20 @@ export function Talk() {
         ))}
       </div>
       <div className="transcript">
-        {!scenario && <p>{hu.talk.intro}</p>}
+        {!scenario && <p>{ui.talk.intro}</p>}
         {turns.map((turn) => (
           <div key={turn.id} className={turn.role === "user" ? "bubble mine" : "bubble"}>
-            <span>{turn.role === "user" ? hu.talk.you : hu.talk.partner}</span>
-            <p>{turn.text}</p>
+            <span>{turn.role === "user" ? ui.talk.you : ui.talk.partner}</span>
+            <p lang="hu">{turn.text}</p>
           </div>
         ))}
         {partial && (
           <div className="bubble">
-            <span>{hu.talk.partner}</span>
-            <p>{partial}</p>
+            <span>{ui.talk.partner}</span>
+            <p lang="hu">{partial}</p>
           </div>
         )}
-        {thinking && <p className="muted">{hu.talk.thinking}</p>}
+        {thinking && <p className="muted">{ui.talk.thinking}</p>}
         {error && (
           <p role="status" className="note">
             {error}
@@ -224,13 +224,13 @@ export function Talk() {
           {status && <p className="muted">{status}</p>}
           <div className="split">
             <button className="btn ghost" type="button" onClick={() => void toggleCall()} disabled={connecting || recording}>
-              {live ? hu.talk.hangup : hu.talk.call}
+              {live ? ui.talk.hangup : ui.talk.call}
             </button>
             <button className="btn ghost" type="button" onClick={() => void toggleRecord()} disabled={live || connecting}>
-              {recording ? hu.talk.recordStop : hu.talk.record}
+              {recording ? ui.talk.recordStop : ui.talk.record}
             </button>
             <button className="btn tiny" type="button" disabled={thinking || live} onClick={() => void ask(turnsRef.current, scenario, true)}>
-              {hu.talk.simpler}
+              {ui.talk.simpler}
             </button>
           </div>
           <div className="composer-row">
@@ -238,12 +238,12 @@ export function Talk() {
               lang="hu"
               value={text}
               onChange={(event) => setText(event.target.value)}
-              placeholder={hu.talk.placeholder}
+              placeholder={ui.talk.placeholder}
               autoCapitalize="sentences"
               spellCheck={false}
             />
             <button className="btn primary" type="submit" disabled={thinking || !text.trim()}>
-              {hu.talk.send}
+              {ui.talk.send}
             </button>
           </div>
         </form>
