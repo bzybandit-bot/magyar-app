@@ -14,8 +14,8 @@ export default defineConfig({
       manifest: {
         name: "Magyar",
         short_name: "Magyar",
-        description: "Képekkel tanulsz magyarul.",
-        lang: "hu",
+        description: "Hungarian immersion. Menus in English. Words, sentences, and conversation stay Hungarian.",
+        lang: "en",
         dir: "ltr",
         start_url: ".",
         scope: ".",

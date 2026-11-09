@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { hu } from "../hu";
+import { ui } from "../hu";
 
 type IconProps = { className?: string };
 
@@ -72,7 +72,7 @@ export function Wordmark() {
   return (
     <span className="wordmark">
       <Tulip />
-      <span>{hu.appName}</span>
+      <span>{ui.appName}</span>
     </span>
   );
 }

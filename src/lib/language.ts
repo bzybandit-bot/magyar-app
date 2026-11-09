@@ -64,12 +64,12 @@ export function greeting(date = new Date()): string {
 
 export function duePhrase(when: number, now = Date.now()): string {
   const minutes = Math.round((when - now) / 60000);
-  if (minutes <= 1) return "Hamarosan jön a következő.";
-  if (minutes < 60) return `${minutes} perc múlva jön a következő.`;
+  if (minutes <= 1) return "The next card is coming soon.";
+  if (minutes < 60) return `${minutes} minutes until the next card.`;
   const hours = Math.round(minutes / 60);
-  if (hours < 24) return `${hours} óra múlva jön a következő.`;
+  if (hours < 24) return `${hours} hours until the next card.`;
   const days = Math.round(hours / 24);
-  return `${days} nap múlva jön a következő.`;
+  return `${days} days until the next card.`;
 }
 
 export function shuffle<T>(list: T[]): T[] {

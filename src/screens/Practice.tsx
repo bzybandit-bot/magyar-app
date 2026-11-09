@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { hu } from "../hu";
+import { learn, ui } from "../hu";
 import { practicePool, recordPractice } from "../lib/db";
 import { judgeAnswer, shuffle } from "../lib/language";
 import { speak, stopAudio } from "../lib/speech";
@@ -84,24 +84,24 @@ export function Practice() {
 
   const feedback =
     judgement === "exact"
-      ? hu.practice.correct
+      ? learn.practice.correct
       : judgement === "accent" && card
-        ? hu.practice.accent(card.display)
+        ? learn.practice.accent(card.display)
         : judgement === "miss" && card
-          ? hu.practice.wrong(card.display)
+          ? learn.practice.wrong(card.display)
           : "";
 
   return (
     <div className="stack">
       <header className="top">
-        <h1>{hu.practice.title}</h1>
+        <h1>{ui.practice.title}</h1>
       </header>
       <div className="modes" role="tablist">
         {(
           [
-            ["hear", hu.practice.hear],
-            ["see", hu.practice.see],
-            ["write", hu.practice.write],
+            ["hear", ui.practice.hear],
+            ["see", ui.practice.see],
+            ["write", ui.practice.write],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -119,16 +119,16 @@ export function Practice() {
           </button>
         ))}
       </div>
-      <p className="muted">{hu.practice.score(score)}</p>
-      {!ready && <p>{hu.boot}</p>}
-      {ready && !card && <p>{hu.practice.empty}</p>}
+      <p className="muted">{ui.practice.score(score)}</p>
+      {!ready && <p>{ui.boot}</p>}
+      {ready && !card && <p>{ui.practice.empty}</p>}
       {card && (
         <>
-          <h2>{mode === "hear" ? hu.practice.audio : mode === "write" ? hu.practice.type : hu.practice.picture}</h2>
-          {mode !== "hear" && <Picture id={card.id} emoji={card.emoji} imageId={card.imageId} label={hu.cards.what} />}
+          <h2 lang="hu">{mode === "hear" ? learn.practice.audio : mode === "write" ? learn.practice.type : learn.practice.picture}</h2>
+          {mode !== "hear" && <Picture id={card.id} emoji={card.emoji} imageId={card.imageId} label={learn.cards.what} lang="hu" />}
           {mode === "hear" && (
             <button className="btn ghost" type="button" onClick={() => void speak(card.display).catch(() => undefined)}>
-              {hu.placement.replay}
+              {ui.placement.replay}
             </button>
           )}
           {mode === "write" ? (
@@ -143,16 +143,18 @@ export function Practice() {
                 lang="hu"
                 value={typed}
                 onChange={(event) => setTyped(event.target.value)}
-                placeholder={hu.practice.placeholder}
+                placeholder={learn.practice.placeholder}
                 autoCapitalize="off"
                 autoCorrect="off"
                 spellCheck={false}
                 disabled={Boolean(judgement)}
               />
-              <p className="muted">{hu.practice.accentNote}</p>
+              <p className="muted" lang="hu">
+                {learn.practice.accentNote}
+              </p>
               {!judgement && (
                 <button className="btn primary" type="submit">
-                  {hu.practice.check}
+                  {ui.practice.check}
                 </button>
               )}
             </form>
@@ -163,12 +165,12 @@ export function Practice() {
                 if (mode === "hear") {
                   return (
                     <button key={option.id} type="button" className={`choice ${state}`} onClick={() => choose(option)} disabled={Boolean(judgement)}>
-                      <Picture id={option.id} emoji={option.emoji} imageId={option.imageId} label={hu.practice.choice(optionIndex + 1)} />
+                      <Picture id={option.id} emoji={option.emoji} imageId={option.imageId} label={ui.practice.choice(optionIndex + 1)} />
                     </button>
                   );
                 }
                 return (
-                  <button key={option.id} type="button" className={`btn ghost choice-text ${state}`} onClick={() => choose(option)} disabled={Boolean(judgement)}>
+                  <button key={option.id} type="button" className={`btn ghost choice-text ${state}`} lang="hu" onClick={() => choose(option)} disabled={Boolean(judgement)}>
                     {option.display}
                   </button>
                 );
@@ -176,13 +178,13 @@ export function Practice() {
             </div>
           )}
           {feedback && (
-            <p role="status" className={judgement === "exact" ? "note good-note" : "note"}>
+            <p role="status" lang="hu" className={judgement === "exact" ? "note good-note" : "note"}>
               {feedback}
             </p>
           )}
           {judgement && (
             <button className="btn primary" type="button" onClick={another}>
-              {hu.practice.next}
+              {ui.practice.next}
             </button>
           )}
         </>

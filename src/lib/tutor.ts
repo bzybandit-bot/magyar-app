@@ -1,5 +1,5 @@
 import type { Level } from "../types";
-import { levelName } from "../hu";
+import { levelNameHu } from "../hu";
 
 export type TutorHistory = {
   role: "user" | "assistant";
@@ -11,7 +11,7 @@ export function tutorInstructions(level: Level, scene: string): string {
     "Te Lili vagy, kedves magyar beszélgetőtárs.",
     "Szigorú szabály: csak magyarul beszélsz. Soha nem használsz angol vagy más idegen nyelvet. Nem fordítasz. Nem írsz zárójelben magyarázatot más nyelven.",
     "Ha a tanuló más nyelven ír vagy beszél, te akkor is csak magyarul válaszolsz, rövidebb szavakkal.",
-    `A tanuló szintje: ${level} (${levelName[level]}). Kicsit e fölött fogalmazz, de maradj érthető.`,
+    `A tanuló szintje: ${level} (${levelNameHu[level]}). Kicsit e fölött fogalmazz, de maradj érthető.`,
     "Egy válasz legfeljebb három rövid mondat, hogy ki lehessen mondani.",
     "Ha a tanuló hibázik, finoman javítsd így: „Úgy mondjuk: …”. Utána folytasd a jelenetet.",
     "Ha elakad, mondd el ugyanazt még egyszerűbb magyar mondatokkal.",

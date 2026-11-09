@@ -1,11 +1,11 @@
-import { hu } from "../hu";
+import { ui } from "../hu";
 import { AiError } from "./openai";
 
 export function explainFailure(error: unknown): string {
   if (error instanceof AiError) {
-    if (error.failure === "auth") return hu.errors.auth;
-    if (error.failure === "quota") return hu.errors.quota;
-    if (error.failure === "empty") return hu.errors.emptyGen;
+    if (error.failure === "auth") return ui.errors.auth;
+    if (error.failure === "quota") return ui.errors.quota;
+    if (error.failure === "empty") return ui.errors.emptyGen;
   }
-  return hu.errors.service;
+  return ui.errors.service;
 }

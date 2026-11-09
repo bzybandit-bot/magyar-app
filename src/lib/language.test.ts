@@ -26,21 +26,22 @@ describe("articles and answers", () => {
 describe("time phrases", () => {
   const now = new Date(2026, 5, 1, 12, 0, 0).getTime();
 
-  it("stays in Hungarian", () => {
+  it("greets in Hungarian and says when the next card is due in English", () => {
     expect(greeting(new Date(2026, 5, 1, 8))).toBe("Jó reggelt");
     expect(greeting(new Date(2026, 5, 1, 14))).toBe("Jó napot");
     expect(greeting(new Date(2026, 5, 1, 20))).toBe("Jó estét");
     expect(greeting(new Date(2026, 5, 1, 23))).toBe("Szép éjszakát");
     for (const phrase of [
-      duePhrase(now + 20_000, now),
-      duePhrase(now + 12 * 60_000, now),
-      duePhrase(now + 3 * 3_600_000, now),
-      duePhrase(now + 2 * 86_400_000, now),
+      greeting(new Date(2026, 5, 1, 8)),
+      greeting(new Date(2026, 5, 1, 14)),
+      greeting(new Date(2026, 5, 1, 20)),
+      greeting(new Date(2026, 5, 1, 23)),
     ]) {
       expect(hasUiEnglish(phrase), phrase).toBe(false);
     }
-    expect(duePhrase(now + 12 * 60_000, now)).toBe("12 perc múlva jön a következő.");
-    expect(duePhrase(now + 3 * 3_600_000, now)).toBe("3 óra múlva jön a következő.");
-    expect(duePhrase(now + 2 * 86_400_000, now)).toBe("2 nap múlva jön a következő.");
+    expect(duePhrase(now + 20_000, now)).toBe("The next card is coming soon.");
+    expect(duePhrase(now + 12 * 60_000, now)).toBe("12 minutes until the next card.");
+    expect(duePhrase(now + 3 * 3_600_000, now)).toBe("3 hours until the next card.");
+    expect(duePhrase(now + 2 * 86_400_000, now)).toBe("2 days until the next card.");
   });
 });

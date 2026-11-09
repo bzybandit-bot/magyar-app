@@ -1,4 +1,4 @@
-import { hu } from "../hu";
+import { ui } from "../hu";
 import type { Level } from "../types";
 import { knownWords, putMedia, saveGeneratedCard } from "./db";
 import { stretchLevel } from "./language";
@@ -20,7 +20,7 @@ export async function createVocabulary(options: {
   if (creating) return 0;
   creating = true;
   try {
-    options.onProgress?.(hu.gen.words);
+    options.onProgress?.(ui.gen.words);
     const known = await knownWords();
     const drafts = await imagineWords(options.key, options.level, known, options.signal);
     const target = stretchLevel(options.level);
@@ -30,7 +30,7 @@ export async function createVocabulary(options: {
       const draft = drafts[index];
       const id = `g-${crypto.randomUUID()}`;
       let imageId: string | undefined;
-      options.onProgress?.(hu.gen.image(index + 1, drafts.length));
+      options.onProgress?.(ui.gen.image(index + 1, drafts.length));
       try {
         const image = await generateImage(options.key, draft.image, options.signal);
         imageId = `img-${id}`;
@@ -40,7 +40,7 @@ export async function createVocabulary(options: {
         if (fatal(error) && saved === 0) throw error;
       }
       let audioId: string | undefined;
-      options.onProgress?.(hu.gen.audio(index + 1, drafts.length));
+      options.onProgress?.(ui.gen.audio(index + 1, drafts.length));
       try {
         const spoken = `${displayOf(draft.kind, draft.word)}. ${draft.sentence}`;
         const audio = await synthesize(options.key, spoken, options.signal);
